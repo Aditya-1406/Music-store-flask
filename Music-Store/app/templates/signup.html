@@ -1,0 +1,38 @@
+{% extends 'layout.html'%}
+
+{%block title%} Signup {%endblock%}
+
+{%block content%}
+<div class="container" style="max-width: 50vw;">
+    <h3>Signup</h3>
+    <hr>
+    
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Name" name="first_name"
+                required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Username" name="username"
+                required>
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="password"
+                name="password" minlength="8" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="confirm_password"
+                name="confirm_password" required>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+            <label class="form-check-label" for="exampleCheck1">I verified my all details are correct</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{%endblock%}
