@@ -1,0 +1,39 @@
+{% extends 'layout.html'%}
+
+{%block title%} Music Store {%endblock%}
+
+{%block content%}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">🎵 Music Album Store</h2>
+
+    <div class="row">
+        {% for album in albums %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+
+                <img src="{{ url_for('static', filename='uploads/' + album.cover_image) }}"
+                     class="card-img-top"
+                     style="height:250px; object-fit:cover;">
+
+                <div class="card-body text-center">
+
+                    <h5 class="card-title">
+                        <a href="{{ url_for('album_detail', album_id=album.id) }}"
+                           class="text-decoration-none">
+                           {{ album.title }}
+                        </a>
+                    </h5>
+
+                    <p class="text-muted">{{ album.artist }}</p>
+
+                    <p class="fw-bold">Copies: {{ album.copies }}</p>
+
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{%endblock%}

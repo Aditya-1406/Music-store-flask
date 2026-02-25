@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 from app.views.auth import SignupView,OTPView,LoginView,LogoutView
+from app.views.album import AlbumCreateView,AlbumDetailView,StoreView
 from app.extensions import db,mail
 
 
@@ -22,7 +23,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'gargaditya674@gmail.com'
 app.config['MAIL_DEFAULT_SENDER'] = 'gargaditya674@gmail.com'
-app.config['MAIL_PASSWORD'] = 'kPASS'
+app.config['MAIL_PASSWORD'] = 'PASS'
 mail.init_app(app)
 
 
@@ -33,6 +34,11 @@ app.add_url_rule("/signup",view_func=SignupView.as_view("signup"),methods = ["GE
 app.add_url_rule("/otp_page",view_func=OTPView.as_view("otp_page"),methods=["GET","POST"])
 app.add_url_rule("/login",view_func=LoginView.as_view("login"),methods=["GET","POST"])
 app.add_url_rule("/logout",view_func=LogoutView.as_view("logout"),methods=["GET"])
+
+# Album routes
+app.add_url_rule("/create-album", view_func=AlbumCreateView.as_view("create_album"))
+app.add_url_rule("/", view_func=StoreView.as_view("store"))
+app.add_url_rule("/album/<int:album_id>", view_func=AlbumDetailView.as_view("album_detail"))
 
 
 

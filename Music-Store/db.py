@@ -22,6 +22,10 @@ class User(db.Model):
         return f"<User {self.email}>"
     
 
+
+# =========================
+# OTP MODEL
+# =========================
 class OTP(db.Model):
     __tablename__ = "otp_codes"
 
@@ -33,3 +37,45 @@ class OTP(db.Model):
 
     def __repr__(self):
         return f"<OTP {self.email}>"
+    
+
+
+# =========================
+# Album MODEL
+# =========================
+
+class Album(db.Model):
+    __tablename__ = "albums"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    artist = db.Column(db.String(150), nullable=False)
+    cover_image = db.Column(db.String(255), nullable=False)
+    copies = db.Column(db.Integer,default=1)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+    songs = db.relationship(
+        "Song",
+        backref="album",
+        lazy="select",
+        cascade="all, delete"
+    )
+
+    def __repr__(self):
+        return f"<Album {self.title}>"
+
+class Song(db.Model):
+    __tablename__ = "songs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+
+    album_id = db.Column(
+        db.Integer,
+        db.ForeignKey("albums.id"),
+        nullable=False,
+        index=True
+    )
+
+    def __repr__(self):
+        return f"<Song {self.title}>"

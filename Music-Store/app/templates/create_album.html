@@ -1,0 +1,61 @@
+{% extends 'layout.html'%}
+
+{%block title%} Create Album {%endblock%}
+
+{%block content%}
+<div class="container" style="max-width: 50vw;">
+    <h3>Create Album</h3>
+    <hr>
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Album Title" name="title"
+                required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Artist" name="artist" required>
+        </div>
+        <div class="mb-3">
+            <label> Cover Image</label><br>
+            <input type="file" class="form-control" id="exampleInputEmail1" placeholder="Email" name="cover" required>
+        </div>
+        <div class="mb-3">
+            <input type="number" class="form-control" id="exampleInputPassword1" placeholder="Copies" name="copies"
+             required>
+        </div>
+        <div class="mb-3">
+            <label> Songs</label>
+            <div id="songs-container">
+                <input type="text" name="songs[]" class="form-control" placeholder="Song name" required>
+            </div>
+
+            <button type="button" onclick="addSong()">+ Add Song</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Album</button>
+    </form>
+
+    <script>
+        function addSong() {
+            const container = document.getElementById("songs-container");
+
+            const div = document.createElement("div");
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = "songs[]";
+            input.placeholder = "Song name";
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.innerText = "Remove";
+            removeBtn.onclick = () => div.remove();
+
+            div.appendChild(input);
+            div.appendChild(removeBtn);
+
+            container.appendChild(div);
+        }
+    </script>
+</div>
+{%endblock%}
