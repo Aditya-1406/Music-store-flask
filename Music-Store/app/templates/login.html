@@ -1,0 +1,24 @@
+{% extends 'layout.html'%}
+
+{%block title%} Login {%endblock%}
+
+{%block content%}
+<div class="container" style="max-width: 50vw;">
+    <h3>Login</h3>
+    <hr>
+    
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Username" name="username"
+                required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="password"
+                name="password" minlength="8" required>
+        </div>
+        <p>Don't have an Account <a href="{{url_for('signup')}}"> Signup</a> </p>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{%endblock%}

@@ -14,7 +14,11 @@
         <div class="container-fluid">
             <a class="navbar-brand">Music Store</a>
             <form class="d-flex" role="search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                {% if session.get("user_id")%}
+                <a href="{{url_for('logout')}}" class="btn btn-danger"> Logout</a>
+                {%else%}
+                <a href="{{url_for('login')}}" class="btn btn-success"> login</a>
+                {%endif%}
             </form>
         </div>
     </nav>

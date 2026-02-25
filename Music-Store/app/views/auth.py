@@ -4,7 +4,7 @@ from app.extensions import mail,db
 import random
 from datetime import datetime
 from flask import render_template, request,redirect,url_for,flash, session
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from db import User,OTP
 
 def generate_otp():
@@ -108,4 +108,41 @@ class OTPView(MethodView):
 
         session.pop('verify_email', None)
         flash("Email verified successfully!")
+        return redirect(url_for("login"))
+    
+
+class LoginView(MethodView):
+    
+    def get(self):
+        return render_template("login.html")
+    
+    def post(self):
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(username = username).first()
+
+        if not user: 
+            flash("User doesn't exists")
+            return redirect(url_for("login"))
+        
+        if not check_password_hash(user.password, password):
+            flash("Password is incorrect")
+            return redirect(url_for("login"))
+        
+        if not user.is_verified:
+            flash("User is not  verified")
+            return redirect(url_for("login"))
+        
+        session["user_id"] = user.id
+        flash("Login Successful")
         return redirect(url_for("signup"))
+
+
+class LogoutView(MethodView):
+
+    def get(self):
+        session.clear()
+        flash("Logout Successfully")
+        return redirect(url_for("login"))
