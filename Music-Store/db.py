@@ -52,6 +52,7 @@ class Album(db.Model):
     artist = db.Column(db.String(150), nullable=False)
     cover_image = db.Column(db.String(255), nullable=False)
     copies = db.Column(db.Integer,default=1)
+    amount = db.Column(db.Integer,nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
     songs = db.relationship(

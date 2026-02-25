@@ -2,10 +2,11 @@ from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash
 from app.extensions import db
 from db import Album, Song
-from app.utils import save_cover_image
+from app.utils import save_cover_image,login_required, admin_required
 
 class AlbumCreateView(MethodView):
 
+    @admin_required
     def get(self):
         return render_template("create_album.html")
 
@@ -15,6 +16,7 @@ class AlbumCreateView(MethodView):
         cover = request.files.get("cover")
         songs = request.form.getlist("songs[]")
         copies = request.form.get("copies")
+        amount = request.form.get("amount")
 
         if not cover:
             flash("Cover image required")
@@ -30,7 +32,8 @@ class AlbumCreateView(MethodView):
             title=title,
             artist=artist,
             cover_image=filename,
-            copies = copies
+            copies = copies,
+            amount = amount
         )
 
         db.session.add(album)
@@ -47,11 +50,13 @@ class AlbumCreateView(MethodView):
     
 
 class StoreView(MethodView):
+    @login_required
     def get(self):
         albums = Album.query.all()
         return render_template("store.html", albums=albums)
     
 class AlbumDetailView(MethodView):
+    @login_required
     def get(self, album_id):
         album = Album.query.get_or_404(album_id)
         return render_template("album_detail.html", album=album)

@@ -2,6 +2,8 @@ import os
 from PIL import Image
 from werkzeug.utils import secure_filename
 from uuid import uuid4
+from functools import wraps
+from flask import session, redirect, url_for,abort
 from flask import current_app
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
@@ -45,3 +47,28 @@ def save_cover_image(file):
     image.save(filepath, optimize=True, quality=75)
 
     return unique_name
+
+
+
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return wrapper
+
+
+def admin_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        # Must be logged in
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+
+        # Must be admin
+        if session.get('role') != 'admin':
+            abort(403)  # Forbidden page
+        
+        return f(*args, **kwargs)
+    return wrapper

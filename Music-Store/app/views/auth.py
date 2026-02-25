@@ -136,8 +136,9 @@ class LoginView(MethodView):
             return redirect(url_for("login"))
         
         session["user_id"] = user.id
+        session["role"] = user.role
         flash("Login Successful")
-        return redirect(url_for("signup"))
+        return redirect(url_for("store"))
 
 
 class LogoutView(MethodView):
