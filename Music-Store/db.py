@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-db = SQLAlchemy()
+from datetime import datetime, timedelta
+from app.extensions import db
 
 # =========================
 # USER MODEL
@@ -15,8 +15,21 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
     is_verified = db.Column(db.Boolean, default=False)
     role = db.Column(db.String(20),default="member")
-    created_at = db.Column(db.DateTime,default=datetime.now())
+    created_at = db.Column(db.DateTime,default=datetime.now)
 
 
     def __repr__(self):
         return f"<User {self.email}>"
+    
+
+class OTP(db.Model):
+    __tablename__ = "otp_codes"
+
+    id = db.Column(db.Integer,primary_key= True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    otp = db.Column(db.String(6),nullable=False)
+    created_at = db.Column(db.DateTime,default = datetime.now)
+    expires_at = db.Column(db.DateTime,default = lambda : datetime.now() + timedelta(minutes=5) )
+
+    def __repr__(self):
+        return f"<OTP {self.email}>"

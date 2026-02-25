@@ -1,7 +1,14 @@
 from flask.views import MethodView
-from flask import render_template, request,redirect,url_for,flash
+from flask_mail import Message
+from app.extensions import mail,db
+import random
+from datetime import datetime
+from flask import render_template, request,redirect,url_for,flash, session
 from werkzeug.security import generate_password_hash
-from db import db, User
+from db import User,OTP
+
+def generate_otp():
+    return str(random.randint(100000,999999))
 
 class SignupView(MethodView):
 
@@ -42,11 +49,63 @@ class SignupView(MethodView):
         db.session.add(new_user)
         db.session.commit()
 
+        otp_code = generate_otp()
+
+        otp_entry = OTP(
+            email = email,
+            otp = otp_code
+        )
+
+        db.session.add(otp_entry)
+        db.session.commit()
+
+        msg = Message(
+            subject= "Verify Your email",
+            recipients= [email]
+        )
+
+        msg.body= f"Your OTP is  {otp_code}. It expires in 5 minutes."
+        mail.send(msg)
+
+        session['verify_email'] = email
+
         flash("Signup successful! Please verify your email.")
+        return redirect(url_for("otp_page"))
+
+
+
+class OTPView(MethodView):
+
+    def get(self):
+        return render_template("otp.html")
+    
+    def post(self):
+        user_otp = request.form.get("otp")
+        email = session.get("verify_email")
+
+        if not email:
+            flash("Session Expired !!!!")
+            return redirect(url_for('signup'))
+
+        record = OTP.query.filter_by(email = email,otp = user_otp).first()
+        user = User.query.filter_by(email=email).first()
+        if not record:
+            flash("Invalid OTP")
+            return redirect(url_for("otp_page"))
+        
+        if record.expires_at < datetime.now():
+            db.session.delete(record)
+            db.session.commit()
+            db.session.delete(user)
+            db.session.commit()
+            flash("OTP Expired")
+            return redirect(url_for("signup"))
+        
+        user.is_verified = True
+
+        db.session.delete(record)
+        db.session.commit()
+
+        session.pop('verify_email', None)
+        flash("Email verified successfully!")
         return redirect(url_for("signup"))
-
-
-        # temporary print (later we save to DB)
-        print(username, email, password)
-
-        return "Signup Successful (DB saving next step)"
