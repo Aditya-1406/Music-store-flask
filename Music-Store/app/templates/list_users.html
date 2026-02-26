@@ -6,6 +6,14 @@
 
 <div class="container">
     <h3> All Users</h3>
+    <form method="get" class="d-flex justify-content-end mb-3">
+    <input type="text" 
+           class="form-control me-2" 
+           placeholder="Search..."
+           name="search"
+           style="width: 200px;">
+    <button class="btn btn-primary btn-sm">Search</button>
+</form>
     <hr>
     <table class="table">
         <thead>
@@ -62,21 +70,21 @@
 
         {% if users.has_prev %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ users.prev_num }}">Previous</a>
+            <a class="page-link" href="?page={{ users.prev_num }}&search={{ search }}">Previous</a>
         </li>
         {% endif %}
 
         {% for p in users.iter_pages() %}
         {% if p %}
         <li class="page-item {% if p == users.page %}active{% endif %}">
-            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            <a class="page-link" href="?page={{ p }}&search={{ search }}">{{ p }}</a>
         </li>
         {% endif %}
         {% endfor %}
 
         {% if users.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ users.next_num }}">Next</a>
+            <a class="page-link" href="?page={{ users.next_num }}&search={{ search }}">Next</a>
         </li>
         {% endif %}
 

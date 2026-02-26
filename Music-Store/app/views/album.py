@@ -3,6 +3,7 @@ from flask import render_template, request, redirect, url_for, flash
 from app.extensions import db
 from db import Album, Song
 from app.utils import save_cover_image,login_required, admin_required
+from sqlalchemy import or_
 
 class AlbumCreateView(MethodView):
 
@@ -64,13 +65,27 @@ class AlbumDetailView(MethodView):
 class ListAlbumAdView(MethodView):
     @admin_required
     def get(self):
+       
         page = request.args.get("page", 1, type=int)
-        albums = Album.query.order_by(Album.id.desc()).paginate(
+        search = request.args.get("search", "")
+
+        query = Album.query
+
+        if search:
+            query = query.filter(
+                or_(
+                    Album.title.ilike(f"%{search}%"),
+                    Album.artist.ilike(f"%{search}%")
+                )
+            )
+
+        albums = query.order_by(Album.id.desc()).paginate(
             page=page,
-            per_page=5,
+            per_page=1,
             error_out=False
         )
-        return render_template("list_albumad.html", albums=albums)
+
+        return render_template("list_albumad.html", albums=albums, search=search)
     
 class UpdateAlbum(MethodView):
     @admin_required
@@ -111,9 +126,22 @@ class HomeView(MethodView):
     @login_required
     def get(self):
         page = request.args.get("page", 1, type=int)
-        albums = Album.query.order_by(Album.id.desc()).paginate(
+        search = request.args.get("search", "")
+
+        query = Album.query
+
+        if search:
+            query = query.filter(
+                or_(
+                    Album.title.ilike(f"%{search}%"),
+                    Album.artist.ilike(f"%{search}%")
+                )
+            )
+
+        albums = query.order_by(Album.id.desc()).paginate(
             page=page,
             per_page=1,
             error_out=False
         )
-        return render_template("home.html", albums=albums)
+
+        return render_template("home.html", albums=albums, search=search)

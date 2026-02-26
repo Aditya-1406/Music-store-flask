@@ -7,7 +7,7 @@ from flask import render_template, request,redirect,url_for,flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import User,OTP
 from app.utils import admin_required,send_mail
-
+from sqlalchemy import or_
 def generate_otp():
     return str(random.randint(100000,999999))
 
@@ -154,9 +154,19 @@ class ListUserView(MethodView):
     @admin_required
     def get(self):
         page = request.args.get("page", 1, type=int)
-        users = User.query.order_by(User.id.desc()).paginate(
+        search = request.args.get("search", "")
+        query = User.query
+        if search:
+            query = query.filter(
+                or_(
+                    User.username.ilike(f"%{search}%"),
+                    User.email.ilike(f"%{search}%"),
+                    User.role.ilike(f"%{search}%")
+                )
+            )
+        users = query.order_by(User.id.desc()).paginate(
             page=page,
-            per_page=5,
+            per_page=1,
             error_out=False
         )
         return render_template("list_users.html", users=users)
