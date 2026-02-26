@@ -106,3 +106,14 @@ class DeleteAlbumView(MethodView):
         flash("Album Deleted successfully!")
         return redirect(url_for("list_albums"))
 
+
+class HomeView(MethodView):
+    @login_required
+    def get(self):
+        page = request.args.get("page", 1, type=int)
+        albums = Album.query.order_by(Album.id.desc()).paginate(
+            page=page,
+            per_page=1,
+            error_out=False
+        )
+        return render_template("home.html", albums=albums)

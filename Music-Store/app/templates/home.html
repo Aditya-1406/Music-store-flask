@@ -1,0 +1,65 @@
+{% extends 'layout.html'%}
+
+{%block title%} Music Store {%endblock%}
+
+{%block content%}
+
+<div class="container mt-4">
+    <h3 class="mb-4">🎵 All Albums</h3>
+
+    <div class="row">
+        {% for album in albums.items %}
+        <div class="col-md-2 mb-4">
+            <div class="card shadow-sm hover-card" style="width: 9.5rem;">
+
+                <img src="{{ url_for('static', filename='uploads/' + album.cover_image) }}" class="card-img-top"
+                    style="width: 150px;">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        <a href="{{ url_for('album_detail', album_id=album.id) }}" class="text-decoration-none">
+                            {{ album.title }}
+                        </a>
+                    </h5>
+
+                    <p class=" card-text text-muted" style="line-height: 20%;">{{ album.artist }}</p>
+                    <p class=" card-text text-muted" style="line-height: 20%;">Copies: {{ album.copies }}</p>
+                    <p class="card-text text-muted" style="line-height: 20%;">Price: {{ album.amount }} Rs</p>
+
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<nav>
+    <ul class="pagination justify-content-center">
+
+        {% if albums.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ albums.prev_num }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for p in albums.iter_pages() %}
+        {% if p %}
+        <li class="page-item {% if p == albums.page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if albums.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ albums.next_num }}">Next</a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+{%endblock%}
