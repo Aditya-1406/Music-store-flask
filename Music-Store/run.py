@@ -2,11 +2,12 @@ from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 from app.views.auth import SignupView,OTPView,LoginView,LogoutView,ListUserView,UpdateRoleView,DeleteUserView
 from app.views.album import AlbumCreateView,AlbumDetailView,StoreView,ListAlbumAdView,UpdateAlbum,DeleteAlbumView,HomeView
+from app.views.carts import AddCartView,ViewCartView
 from app.extensions import db,mail
 
 
 app = Flask(__name__,template_folder="app/templates")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:PAA%40123@localhost:3306/music_store'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:PASS%40123@localhost:3306/music_store'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "supersecretkeydontknowwh@tiswrllten"
 
@@ -23,7 +24,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'gargaditya674@gmail.com'
 app.config['MAIL_DEFAULT_SENDER'] = 'gargaditya674@gmail.com'
-app.config['MAIL_PASSWORD'] = 'PAA'
+app.config['MAIL_PASSWORD'] = 'PASS'
 mail.init_app(app)
 
 
@@ -49,7 +50,9 @@ app.add_url_rule("/delete-album/<int:album_id>", view_func=DeleteAlbumView.as_vi
 app.add_url_rule("/home", view_func=HomeView.as_view("home"),methods=["GET","POST"])
 
 
-
+# Cart and Order Routes
+app.add_url_rule("/add-cart/<int:album_id>", view_func=AddCartView.as_view("add_cart"),methods=["GET","POST"])
+app.add_url_rule("/cart", view_func=ViewCartView.as_view("view_cart"),methods=["GET"])
 
 if __name__=="__main__":
     app.run(debug=True)

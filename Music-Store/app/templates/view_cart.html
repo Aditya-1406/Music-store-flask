@@ -1,0 +1,17 @@
+{% extends 'layout.html'%}
+
+{%block title%} Cart {%endblock%}
+
+{%block content%}
+{% if cart and cart.items %}
+    {% for item in cart.items %}
+        <p>{{ item.album.title }}</p>
+        <p>Price: ₹ {{ item.album.amount }}</p>
+        <p>Quantity: {{ item.quantity }}</p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>Your cart is empty.</p>
+{% endif %}
+
+{%endblock%}

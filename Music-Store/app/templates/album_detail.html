@@ -12,7 +12,7 @@
         <!-- LEFT: COVER -->
         <div class="col-md-5">
             <img src="{{ url_for('static', filename='uploads/' + album.cover_image) }}"
-                 class="img-fluid rounded shadow">
+                class="img-fluid rounded shadow">
         </div>
 
         <!-- RIGHT: DETAILS -->
@@ -28,11 +28,16 @@
             <h4>Songs Included</h4>
             <ul class="list-group">
                 {% for song in album.songs %}
-                    <li class="list-group-item">{{ song.title }}</li>
+                <li class="list-group-item">{{ song.title }}</li>
                 {% endfor %}
             </ul>
 
-            <button class="btn btn-dark mt-4">Buy Now</button>
+            <form method="post" action="{{ url_for('add_cart', album_id=album.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-primary mt-2">
+                    Add to Cart
+                </button>
+            </form>
         </div>
 
     </div>

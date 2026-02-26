@@ -80,3 +80,50 @@ class Song(db.Model):
 
     def __repr__(self):
         return f"<Song {self.title}>"
+    
+
+
+
+class Cart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    items = db.relationship(
+        "CartItem",
+        backref="cart",
+        cascade="all, delete-orphan"
+    )
+
+
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
+    album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
+    quantity = db.Column(db.Integer, default=1)
+
+    album = db.relationship("Album")
+
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    total_amount = db.Column(db.Float)
+    status = db.Column(db.String(50), default="Paid")
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+    items = db.relationship(
+        "OrderItem",
+        backref="order",
+        cascade="all, delete-orphan"
+    )
+
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+    album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
+    quantity = db.Column(db.Integer)
+    price = db.Column(db.Float)
+
+    album = db.relationship("Album")
