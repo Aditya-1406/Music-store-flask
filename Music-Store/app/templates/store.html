@@ -5,23 +5,48 @@
 {%block content%}
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">🎵 Music Album Store</h2>
+
+    <div id="carouselExampleInterval" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="2000">
+                <img src="{{ url_for('static', filename='uploads/banner1.jpg') }}" class="d-block w-100" style="height: 400px; object-fit:fill ;" alt="...">
+            </div>
+            <div class="carousel-item" data-bs-interval="2000">
+                <img src="{{ url_for('static', filename='uploads/banner2.jpg') }}" class="d-block w-100" style="height: 400px; object-fit:fill ;"alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ url_for('static', filename='uploads/banner3.jpg') }}" class="d-block w-100" style="height: 400px; object-fit:fill ;"alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+
+    <h3 class="mb-4">🎵 Latest Albums</h3>
 
     <div class="row">
         {% for album in albums %}
         <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm hover-card">
 
-                <img src="{{ url_for('static', filename='uploads/' + album.cover_image) }}"
-                     class="card-img-top"
-                     style="height:250px; object-fit:cover;">
+                <img src="{{ url_for('static', filename='uploads/' + album.cover_image) }}" class="card-img-top"
+                    style="height:250px; object-fit:cover;">
 
                 <div class="card-body text-center">
 
                     <h5 class="card-title">
-                        <a href="{{ url_for('album_detail', album_id=album.id) }}"
-                           class="text-decoration-none">
-                           {{ album.title }}
+                        <a href="{{ url_for('album_detail', album_id=album.id) }}" class="text-decoration-none">
+                            {{ album.title }}
                         </a>
                     </h5>
 
