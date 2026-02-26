@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
-from app.views.auth import SignupView,OTPView,LoginView,LogoutView
+from app.views.auth import SignupView,OTPView,LoginView,LogoutView,ListUserView,UpdateRoleView,DeleteUserView
 from app.views.album import AlbumCreateView,AlbumDetailView,StoreView,ListAlbumAdView,UpdateAlbum,DeleteAlbumView
 from app.extensions import db,mail
 
@@ -23,7 +23,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'gargaditya674@gmail.com'
 app.config['MAIL_DEFAULT_SENDER'] = 'gargaditya674@gmail.com'
-app.config['MAIL_PASSWORD'] = 'PASS'
+app.config['MAIL_PASSWORD'] = 'PAS'
 mail.init_app(app)
 
 
@@ -34,6 +34,10 @@ app.add_url_rule("/signup",view_func=SignupView.as_view("signup"),methods = ["GE
 app.add_url_rule("/otp_page",view_func=OTPView.as_view("otp_page"),methods=["GET","POST"])
 app.add_url_rule("/login",view_func=LoginView.as_view("login"),methods=["GET","POST"])
 app.add_url_rule("/logout",view_func=LogoutView.as_view("logout"),methods=["GET"])
+app.add_url_rule("/list-users",view_func=ListUserView.as_view("list_users"),methods=["GET"])
+app.add_url_rule("/update-user/<int:user_id>",view_func=UpdateRoleView.as_view("update_user"),methods=["GET","POST"])
+app.add_url_rule("/delete-user/<int:user_id>",view_func=DeleteUserView.as_view("delete_user"),methods=["GET","POST"])
+
 
 # Album routes
 app.add_url_rule("/create-album", view_func=AlbumCreateView.as_view("create_album"))

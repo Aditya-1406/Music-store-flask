@@ -5,6 +5,8 @@ from uuid import uuid4
 from functools import wraps
 from flask import session, redirect, url_for,abort
 from flask import current_app
+from flask_mail import Message
+from app.extensions import mail
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
@@ -69,6 +71,18 @@ def admin_required(f):
         # Must be admin
         if session.get('role') != 'admin':
             abort(403)  # Forbidden page
+            return redirect(url_for('login'))
         
         return f(*args, **kwargs)
     return wrapper
+
+
+def send_mail(subject,email,message):
+
+    msg = Message(
+            subject= subject,
+            recipients= [email]
+        )
+
+    msg.body= message
+    mail.send(msg)

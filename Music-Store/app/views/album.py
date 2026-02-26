@@ -67,7 +67,7 @@ class ListAlbumAdView(MethodView):
         page = request.args.get("page", 1, type=int)
         albums = Album.query.order_by(Album.id.desc()).paginate(
             page=page,
-            per_page=2,
+            per_page=5,
             error_out=False
         )
         return render_template("list_albumad.html", albums=albums)
@@ -103,6 +103,6 @@ class DeleteAlbumView(MethodView):
         album = Album.query.get_or_404(album_id)
         db.session.delete(album)
         db.session.commit()
-        flash("Album updated successfully!")
+        flash("Album Deleted successfully!")
         return redirect(url_for("list_albums"))
 

@@ -1,0 +1,86 @@
+{% extends 'layout.html'%}
+
+{%block title%} All Users {%endblock%}
+
+{%block content%}
+
+<div class="container">
+    <h3> All Users</h3>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">username</th>
+                <th scope="col">email</th>
+                <th scope="col">is_verified</th>
+                <th scope="col">role</th>
+                <th scope="col">Edit Role</th>
+                <th scope="col">Delete</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users.items %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{%if user.is_verified%} ✅
+                    {%else%} ❎
+                    {%endif%}
+
+                </td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <form action="{{ url_for('update_user', user_id=user.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Update this Role?')">
+                            Update
+                        </button>
+                    </form>
+                </td> 
+                <td>
+                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this user?')">
+                            Delete
+                        </button>
+                    </form>
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<nav>
+    <ul class="pagination justify-content-center">
+
+        {% if users.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ users.prev_num }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for p in users.iter_pages() %}
+        {% if p %}
+        <li class="page-item {% if p == users.page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if users.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ users.next_num }}">Next</a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+{%endblock%}

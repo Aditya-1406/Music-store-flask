@@ -6,6 +6,7 @@ from datetime import datetime
 from flask import render_template, request,redirect,url_for,flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import User,OTP
+from app.utils import admin_required,send_mail
 
 def generate_otp():
     return str(random.randint(100000,999999))
@@ -147,3 +148,49 @@ class LogoutView(MethodView):
         session.clear()
         flash("Logout Successfully")
         return redirect(url_for("login"))
+    
+
+class ListUserView(MethodView):
+    @admin_required
+    def get(self):
+        page = request.args.get("page", 1, type=int)
+        users = User.query.order_by(User.id.desc()).paginate(
+            page=page,
+            per_page=5,
+            error_out=False
+        )
+        return render_template("list_users.html", users=users)
+    
+class UpdateRoleView(MethodView):
+    @admin_required
+    def post(self,user_id):
+        user = User.query.get_or_404(user_id)
+        subject = "Role Updated"
+        email = user.email
+
+        if user.role == "member":
+            user.role = "admin"
+            session["role"] = user.role
+            message = f"Congrats {user.username}, Your role has been changed to admin. Now you can access the admin panel"
+            send_mail(subject,email,message)
+
+        elif user.role =="admin":
+            user.role= "member"
+            session["role"] = user.role
+            message = f"Sorry {user.username}, Your role has been changed to member. As you are not fit for the admin role"
+            send_mail(subject,email,message)
+        else:
+            user.role= "member"
+        
+        db.session.commit()
+        flash("User Role updated successfully","success")
+        return redirect(url_for("list_users"))
+
+class DeleteUserView(MethodView):
+    @admin_required
+    def post(self,user_id):
+        user = User.query.get_or_404(user_id)
+        db.session.delete(user)
+        db.session.commit()
+        flash("User Deleted successfully!")
+        return redirect(url_for("list_users"))
