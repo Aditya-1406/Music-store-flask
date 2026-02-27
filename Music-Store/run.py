@@ -8,7 +8,7 @@ from app.extensions import db,mail
 
 
 app = Flask(__name__,template_folder="app/templates")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:PASS%40123@localhost:3306/music_store'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:PASS@localhost:3306/music_store'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "supersecretkeydontknowwh@tiswrllten"
 
@@ -25,7 +25,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'gargaditya674@gmail.com'
 app.config['MAIL_DEFAULT_SENDER'] = 'gargaditya674@gmail.com'
-app.config['MAIL_PASSWORD'] = 'PASS'
+app.config['MAIL_PASSWORD'] = 'YOUR_APP_PASS'
 mail.init_app(app)
 
 
