@@ -47,7 +47,7 @@ class AlbumCreateView(MethodView):
         db.session.commit()
 
         flash("Album created successfully!")
-        return redirect(url_for("store"))
+        return redirect(url_for("list_albums"))
     
 
 class StoreView(MethodView):
