@@ -28,6 +28,11 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-disabled="true" href="{{url_for('orders')}}">History</a>
                 </li>
+                {%if session.get("role")=="admin"%}
+                <li class="nav-item">
+                    <a class="nav-link" aria-disabled="true" href="{{url_for('dashboard')}}">Dashboard</a>
+                </li>
+                {%endif%}
             </ul>
             {%endif%}
 

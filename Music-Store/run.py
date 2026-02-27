@@ -3,11 +3,12 @@ from flask_wtf.csrf import CSRFProtect
 from app.views.auth import SignupView,OTPView,LoginView,LogoutView,ListUserView,UpdateRoleView,DeleteUserView
 from app.views.album import AlbumCreateView,AlbumDetailView,StoreView,ListAlbumAdView,UpdateAlbum,DeleteAlbumView,HomeView
 from app.views.carts import AddCartView,ViewCartView,CheckoutView,OrderHistoryView,ListOrderView,OrderDetailView
+from app.views.dashboard import DashboardView
 from app.extensions import db,mail
 
 
 app = Flask(__name__,template_folder="app/templates")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:PASS%40123@localhost:3306/music_store'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:PASs%40123@localhost:3306/music_store'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "supersecretkeydontknowwh@tiswrllten"
 
@@ -24,7 +25,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'gargaditya674@gmail.com'
 app.config['MAIL_DEFAULT_SENDER'] = 'gargaditya674@gmail.com'
-app.config['MAIL_PASSWORD'] = 'PASS'
+app.config['MAIL_PASSWORD'] = 'PASs'
 mail.init_app(app)
 
 
@@ -57,5 +58,11 @@ app.add_url_rule("/checkout", view_func=CheckoutView.as_view("checkout"),methods
 app.add_url_rule("/orders", view_func=OrderHistoryView.as_view("orders"),methods=["GET"])
 app.add_url_rule("/list-orders",view_func=ListOrderView.as_view("list_order"),methods=["GET"])
 app.add_url_rule("/order-detail/<int:order_id>", view_func=OrderDetailView.as_view("order_detail"),methods=["GET"])
+
+#dashboard route
+
+app.add_url_rule("/dashboard",view_func=DashboardView.as_view("dashboard"),methods=["GET"])
+
+
 if __name__=="__main__":
     app.run(debug=True)
