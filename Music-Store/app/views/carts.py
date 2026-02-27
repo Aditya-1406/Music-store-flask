@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash,session
 from app.extensions import db
 from db import Album, Song, Cart,CartItem,Order,OrderItem, User
-from app.utils import save_cover_image,login_required, admin_required
+from app.utils import save_cover_image,login_required, admin_required,send_mail
 from sqlalchemy import or_
 
 
@@ -52,7 +52,6 @@ class ViewCartView(MethodView):
             total += item.album.amount * item.quantity
         return render_template("view_cart.html",cart = cart,total = total)
     
-
 class CheckoutView(MethodView):
     @login_required
     def post(self):
@@ -62,48 +61,73 @@ class CheckoutView(MethodView):
         if not cart or not cart.items:
             flash("Cart is empty", "danger")
             return redirect(url_for("cart"))
-        
+
         total = 0
 
         for item in cart.items:
             if item.quantity > item.album.copies:
-                item.quantity = item.album.copies 
+                item.quantity = item.album.copies
                 flash(
-                f"Quantity adjusted for {item.album.title} due to stock limit.",
-                "warning"
+                    f"Quantity adjusted for {item.album.title} due to stock limit.",
+                    "warning"
                 )
+                db.session.commit()
                 return redirect(url_for("cart"))
-                
-            
+
             total += item.album.amount * item.quantity
-        db.session.commit()
-        
+
+        # Create Order
         order = Order(
-            user_id = user_id,
-            total_amount = total,
-            status = "Paid"
+            user_id=user_id,
+            total_amount=total,
+            status="Paid"
         )
 
         db.session.add(order)
-        db.session.flush()
+        db.session.flush()  # Get order.id
 
+        invoice_lines = []
+        invoice_lines.append(f"Order ID: {order.id}")
+        invoice_lines.append("-" * 40)
+
+        # Create Order Items
         for item in cart.items:
             order_item = OrderItem(
-                order_id = order.id,
-                album_id = item.album.id,
-                quantity = item.quantity,
-                price = item.album.amount
+                order_id=order.id,
+                album_id=item.album.id,
+                quantity=item.quantity,
+                price=item.album.amount
             )
             db.session.add(order_item)
 
+            # Reduce stock
             item.album.copies -= item.quantity
-        
+
+            # Add to invoice text
+            line_total = item.quantity * item.album.amount
+            invoice_lines.append(
+                f"{item.album.title} x {item.quantity} = ₹ {line_total}"
+            )
+
+        invoice_lines.append("-" * 40)
+        invoice_lines.append(f"Total Paid: ₹ {total}")
+        invoice_lines.append("\nThank you for shopping with us 🎵")
+
+        # Remove cart
         db.session.delete(cart)
         db.session.commit()
 
-        flash("Payment Successful Order Created", "success")
-        return redirect(url_for("orders"))
-    
+        # 🔥 Send Email Invoice
+        message = "\n".join(invoice_lines)
+
+        send_mail(
+            subject=f"Invoice for Order #{order.id}",
+            email=order.user.email,
+            message=message
+        )
+
+        flash("Payment Successful! Invoice sent to your email.", "success")
+        return redirect(url_for("orders"))    
 class OrderHistoryView(MethodView):
     @login_required
     def get(self):
