@@ -1,13 +1,47 @@
 {% extends 'layout.html'%}
 
-{%block title%} Orders {%endblock%}
+{%block title%} Transaction {%endblock%}
 
 {%block content%}
-{%for order in orders%}
-{{order.user_id.}}
-{{order.total_amount}}
-{%for item in order.items%}
-    {{item.album.title}}
-{%endfor%}
-{%endfor%}
+
+<div class="container">
+    <h3> All Users</h3>
+    <form method="get" class="d-flex justify-content-end mb-3">
+    <input type="text" 
+           class="form-control me-2" 
+           placeholder="Enter id..."
+           name="search"
+           style="width: 200px;">
+    <button class="btn btn-primary btn-sm">Search</button>
+</form>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">order id</th>
+                <th scope="col">amount</th>
+                <th scope="col">status</th>
+                <th scope="col">Order At</th>
+
+            </tr>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td><a href="{{url_for('order_detail',order_id = order.id)}}" style="text-decoration: none;">{{ order.id }}</a></td>
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.created_at }}</td>
+               
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
 {%endblock%}

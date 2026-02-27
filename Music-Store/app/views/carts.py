@@ -108,9 +108,19 @@ class OrderHistoryView(MethodView):
     @login_required
     def get(self):
         user_id = session.get("user_id")
+        search = request.args.get("search", "")
 
-        orders = Order.query.filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
-        return render_template("orders.html",orders=orders)
+        query = Order.query.filter_by(user_id=user_id)
+
+        if search:
+            if search.isdigit():   # 🔥 safe check
+                query = query.filter(Order.id == int(search))
+            else:
+                query = query.filter(Order.status.ilike(f"%{search}%"))
+
+        orders = query.order_by(Order.created_at.desc()).all()
+
+        return render_template("orders.html", orders=orders)
     
 class ListOrderView(MethodView):
     @admin_required
