@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash,session
 from app.extensions import db
-from db import Album, Song, Cart,CartItem,Order,OrderItem
+from db import Album, Song, Cart,CartItem,Order,OrderItem, User
 from app.utils import save_cover_image,login_required, admin_required
 from sqlalchemy import or_
 
@@ -111,3 +111,23 @@ class OrderHistoryView(MethodView):
 
         orders = Order.query.filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
         return render_template("orders.html",orders=orders)
+    
+class ListOrderView(MethodView):
+    @admin_required
+    def get(self):
+        page = request.args.get("page", 1, type=int)
+        search = request.args.get("search", "")
+        query = Order.query.join(User)
+        if search:
+            query = query.filter(
+                or_(
+                    User.username.ilike(f"%{search}%"),
+                    Order.status.ilike(f"%{search}%"),
+                )
+            )
+        orders = query.order_by(Order.id.desc()).paginate(
+            page=page,
+            per_page=1,
+            error_out=False
+        )
+        return render_template("list_order.html", orders=orders)

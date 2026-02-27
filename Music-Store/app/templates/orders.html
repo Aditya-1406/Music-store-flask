@@ -4,6 +4,7 @@
 
 {%block content%}
 {%for order in orders%}
+{{order.user_id.}}
 {{order.total_amount}}
 {%for item in order.items%}
     {{item.album.title}}

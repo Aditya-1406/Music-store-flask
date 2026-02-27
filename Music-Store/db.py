@@ -108,6 +108,7 @@ class CartItem(db.Model):
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", backref="orders")
     total_amount = db.Column(db.Float)
     status = db.Column(db.String(50), default="Paid")
     created_at = db.Column(db.DateTime, default=datetime.now)

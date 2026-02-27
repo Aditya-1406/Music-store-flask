@@ -1,0 +1,68 @@
+{% extends 'layout.html'%}
+
+{%block title%} All Orders {%endblock%}
+
+{%block content%}
+
+<div class="container">
+    <h3> All Orders</h3>
+    <form method="get" class="d-flex justify-content-end mb-3">
+    <input type="text" 
+           class="form-control me-2" 
+           placeholder="Search..."
+           name="search"
+           style="width: 200px;">
+    <button class="btn btn-primary btn-sm">Search</button>
+</form>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">username</th>
+                <th scope="col">amount</th>
+                <th scope="col">status</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td>{{ order.user.username }}</td>
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.status }}</td>
+               
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<nav>
+    <ul class="pagination justify-content-center">
+
+        {% if orders.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ orders.prev_num }}&search={{ search }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for p in orders.iter_pages() %}
+        {% if p %}
+        <li class="page-item {% if p == orders.page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}&search={{ search }}">{{ p }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if orders.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ orders.next_num }}&search={{ search }}">Next</a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+{%endblock%}
