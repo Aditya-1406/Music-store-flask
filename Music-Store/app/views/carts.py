@@ -131,3 +131,10 @@ class ListOrderView(MethodView):
             error_out=False
         )
         return render_template("list_order.html", orders=orders)
+    
+    
+class OrderDetailView(MethodView):
+    @login_required
+    def get(self,order_id):
+        order = Order.query.get_or_404(order_id)
+        return render_template("order_detail.html", order=order)

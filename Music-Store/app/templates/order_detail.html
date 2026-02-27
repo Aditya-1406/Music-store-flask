@@ -1,0 +1,42 @@
+{% extends 'layout.html'%}
+
+{%block title%} All Orders {%endblock%}
+
+{%block content%}
+
+<div class="container">
+    <h3> Order Details</h3>
+    <hr>
+
+    <h5> Order id : {{order.id}}</h5>
+    <h5> Name : {{order.user.username}}</h5>
+    <h5> Amount Paid : {{order.total_amount}}</h5>
+    <h5>Status : {{order.status}}</h5>
+
+    <hr>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">album</th>
+                <th scope="col">quantity</th>
+                <th scope="col">price</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td>{{ item.album.title }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+               
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{%endblock%}
