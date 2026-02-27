@@ -43,6 +43,11 @@ class ViewCartView(MethodView):
     def get(self):
         user_id = session.get("user_id")
         cart = Cart.query.filter_by(user_id=user_id).first()
+        
+        # 🔥 SAFE CHECK
+        if not cart or not cart.items:
+            return render_template("view_cart.html", cart=None, total=0)
+        
         total = 0
         for item in cart.items:
             if item.quantity > item.album.copies:
@@ -127,7 +132,8 @@ class CheckoutView(MethodView):
         )
 
         flash("Payment Successful! Invoice sent to your email.", "success")
-        return redirect(url_for("orders"))    
+        return redirect(url_for("orders"))  
+      
 class OrderHistoryView(MethodView):
     @login_required
     def get(self):

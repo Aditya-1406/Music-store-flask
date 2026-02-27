@@ -11,13 +11,30 @@
 
 <body>
     <nav class="navbar bg-body-tertiary shadow p-2 mb-5 bg-body-tertiary rounded">
+        {%if session.get("user_id")%}
         <div class="container-fluid">
-            <a class="navbar-brand">Music Store</a>
+            <a href="{{url_for('store')}}" class="navbar-brand">Music Store</a>
+
+            <ul class="nav justify-content-center nav-underling">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{url_for('store')}}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('home')}}">Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('view_cart')}}">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-disabled="true" href="{{url_for('orders')}}">History</a>
+                </li>
+            </ul>
+            {%endif%}
+
+
             <form class="d-flex" role="search">
                 {% if session.get("user_id")%}
                 <a href="{{url_for('logout')}}" class="btn btn-danger"> Logout</a>
-                {%else%}
-                <a href="{{url_for('login')}}" class="btn btn-success"> login</a>
                 {%endif%}
             </form>
         </div>
