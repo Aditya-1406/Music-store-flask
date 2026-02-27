@@ -2,6 +2,165 @@
 
 {%block title%} Music Store {%endblock%}
 
+<style>
+        body { overflow-x: hidden; }
+        .sidebar {
+            height: 100vh;
+            background-color: #212529;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #343a40;
+            display: block;
+            padding-left: 10px;
+        }
+    </style>
+
 {%block content%}
 <h1> Dashboard</h1>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-md-2 sidebar p-4 text-white">
+
+            <h4 class="text-center mb-4">Admin Panel</h4>
+
+            <ul class="nav flex-column">
+
+                <li class="nav-item mb-3">
+                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                </li>
+
+                <li class="nav-item mb-3">
+                    <a href="{{ url_for('list_users') }}">Users</a>
+                </li>
+
+                <li class="nav-item mb-3">
+                    <a href="{{ url_for('list_albums') }}">Albums</a>
+                </li>
+
+                <li class="nav-item mb-3">
+                    <a href="{{ url_for('list_order') }}">Orders</a>
+                </li>
+
+                <li class="nav-item mt-4">
+                    <a href="{{ url_for('logout') }}" class="text-danger">Logout</a>
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+
+            <h3 class="mb-4">Admin Dashboard</h3>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h6>Total Users</h6>
+                            <h3>{{ total_users }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h6>Total Albums</h6>
+                            <h3>{{ total_albums }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h6>Total Orders</h6>
+                            <h3>{{ total_orders }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h6>Total Revenue</h6>
+                            <h3>₹ {{ total_revenue }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+
+                <!-- Monthly Sales -->
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <h5>Monthly Sales</h5>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Albums -->
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <h5>Top Selling Albums</h5>
+                        <canvas id="topAlbumChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    // 📊 Monthly Sales Chart
+    new Chart(document.getElementById('salesChart'), {
+        type: 'bar',
+        data: {
+            labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+            datasets: [{
+                label: 'Sales ₹',
+                data: {{ sales_data|tojson }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+
+    // 🏆 Top Selling Albums
+    new Chart(document.getElementById('topAlbumChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ top_album_labels|tojson }},
+            datasets: [{
+                data: {{ top_album_data|tojson }},
+                backgroundColor: [
+                    '#007bff',
+                    '#28a745',
+                    '#ffc107',
+                    '#dc3545',
+                    '#6f42c1'
+                ]
+            }]
+        }
+    });
+
+</script>
+
 {%endblock%}
