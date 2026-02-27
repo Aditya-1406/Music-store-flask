@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 from app.views.auth import SignupView,OTPView,LoginView,LogoutView,ListUserView,UpdateRoleView,DeleteUserView
 from app.views.album import AlbumCreateView,AlbumDetailView,StoreView,ListAlbumAdView,UpdateAlbum,DeleteAlbumView,HomeView
-from app.views.carts import AddCartView,ViewCartView
+from app.views.carts import AddCartView,ViewCartView,CheckoutView,OrderHistoryView
 from app.extensions import db,mail
 
 
@@ -53,6 +53,8 @@ app.add_url_rule("/home", view_func=HomeView.as_view("home"),methods=["GET","POS
 # Cart and Order Routes
 app.add_url_rule("/add-cart/<int:album_id>", view_func=AddCartView.as_view("add_cart"),methods=["GET","POST"])
 app.add_url_rule("/cart", view_func=ViewCartView.as_view("view_cart"),methods=["GET"])
+app.add_url_rule("/checkout", view_func=CheckoutView.as_view("checkout"),methods=["POST"])
+app.add_url_rule("/orders", view_func=OrderHistoryView.as_view("orders"),methods=["GET"])
 
 if __name__=="__main__":
     app.run(debug=True)

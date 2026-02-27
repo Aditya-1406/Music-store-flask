@@ -34,9 +34,15 @@
 
             <form method="post" action="{{ url_for('add_cart', album_id=album.id) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {%if album.copies > 0%}
                 <button class="btn btn-sm btn-primary mt-2">
                     Add to Cart
                 </button>
+                {%else%}
+                <button class="btn btn-sm btn-primary mt-2 disabled">
+                    Add to Cart
+                </button>
+                {%endif%}
             </form>
         </div>
 

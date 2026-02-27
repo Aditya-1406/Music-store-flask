@@ -4,14 +4,22 @@
 
 {%block content%}
 {% if cart and cart.items %}
-    {% for item in cart.items %}
-        <p>{{ item.album.title }}</p>
-        <p>Price: ₹ {{ item.album.amount }}</p>
-        <p>Quantity: {{ item.quantity }}</p>
-        <hr>
-    {% endfor %}
+{% for item in cart.items %}
+<p>{{ item.album.title }}</p>
+<p>Price: ₹ {{ item.album.amount }}</p>
+<p>Quantity: {{ item.quantity }}</p>
+<hr>
+{% endfor %}
 {% else %}
-    <p>Your cart is empty.</p>
+<p>Your cart is empty.</p>
 {% endif %}
 
+{{total}}
+<form method="post" action="{{ url_for('checkout')}}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-sm btn-primary mt-2">
+        Checkout
+    </button>
+</form>
 {%endblock%}
+

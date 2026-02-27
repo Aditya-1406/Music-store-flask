@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash,session
 from app.extensions import db
-from db import Album, Song, Cart,CartItem
+from db import Album, Song, Cart,CartItem,Order,OrderItem
 from app.utils import save_cover_image,login_required, admin_required
 from sqlalchemy import or_
 
@@ -43,4 +43,71 @@ class ViewCartView(MethodView):
     def get(self):
         user_id = session.get("user_id")
         cart = Cart.query.filter_by(user_id=user_id).first()
-        return render_template("view_cart.html",cart = cart)
+        total = 0
+        for item in cart.items:
+            if item.quantity > item.album.copies:
+                flash(f"Not enough stock for {item.album.title}", "danger")
+                return redirect(url_for("view_cart"))
+
+            total += item.album.amount * item.quantity
+        return render_template("view_cart.html",cart = cart,total = total)
+    
+
+class CheckoutView(MethodView):
+    @login_required
+    def post(self):
+        user_id = session.get("user_id")
+        cart = Cart.query.filter_by(user_id=user_id).first()
+
+        if not cart or not cart.items:
+            flash("Cart is empty", "danger")
+            return redirect(url_for("cart"))
+        
+        total = 0
+
+        for item in cart.items:
+            if item.quantity > item.album.copies:
+                item.quantity = item.album.copies 
+                flash(
+                f"Quantity adjusted for {item.album.title} due to stock limit.",
+                "warning"
+                )
+                return redirect(url_for("cart"))
+                
+            
+            total += item.album.amount * item.quantity
+        db.session.commit()
+        
+        order = Order(
+            user_id = user_id,
+            total_amount = total,
+            status = "Paid"
+        )
+
+        db.session.add(order)
+        db.session.flush()
+
+        for item in cart.items:
+            order_item = OrderItem(
+                order_id = order.id,
+                album_id = item.album.id,
+                quantity = item.quantity,
+                price = item.album.amount
+            )
+            db.session.add(order_item)
+
+            item.album.copies -= item.quantity
+        
+        db.session.delete(cart)
+        db.session.commit()
+
+        flash("Payment Successful Order Created", "success")
+        return redirect(url_for("orders"))
+    
+class OrderHistoryView(MethodView):
+    @login_required
+    def get(self):
+        user_id = session.get("user_id")
+
+        orders = Order.query.filter_by(user_id=user_id).order_by(Order.created_at.desc()).all()
+        return render_template("orders.html",orders=orders)
