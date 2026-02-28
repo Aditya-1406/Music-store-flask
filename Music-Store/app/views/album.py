@@ -1,7 +1,7 @@
 from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash
 from app.extensions import db
-from db import Album, Song
+from db import Album, Song,OrderItem
 from app.utils import save_cover_image,login_required, admin_required
 from sqlalchemy import or_
 
@@ -116,6 +116,10 @@ class DeleteAlbumView(MethodView):
     @admin_required
     def post(self,album_id):
         album = Album.query.get_or_404(album_id)
+        existing_order = OrderItem.query.filter_by(album_id=album_id).first()
+        if existing_order:
+            flash("❌ Cannot delete album. It has been ordered by users.", "danger")
+            return redirect(url_for("dashboard")) 
         db.session.delete(album)
         db.session.commit()
         flash("Album Deleted successfully!")

@@ -65,7 +65,7 @@ class CheckoutView(MethodView):
 
         if not cart or not cart.items:
             flash("Cart is empty", "danger")
-            return redirect(url_for("cart"))
+            return redirect(url_for("view_cart"))
 
         total = 0
 
@@ -77,7 +77,7 @@ class CheckoutView(MethodView):
                     "warning"
                 )
                 db.session.commit()
-                return redirect(url_for("cart"))
+                return redirect(url_for("view_cart"))
 
             total += item.album.amount * item.quantity
 
