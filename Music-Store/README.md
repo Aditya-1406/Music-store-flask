@@ -103,6 +103,7 @@ Replace:
 
 with your MySQL credentials.
 
+## Note :  After setting up the required config like username,pass for sql and Mail id, App password for mail. You have to just run the run.py file.It will automatically create everything.And for admin see Admin Access
 ---
 
 ## 5️⃣ Initialize Database
