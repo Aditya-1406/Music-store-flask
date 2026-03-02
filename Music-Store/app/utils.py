@@ -71,7 +71,6 @@ def admin_required(f):
         # Must be admin
         if session.get('role') != 'admin':
             abort(403)  # Forbidden page
-            return redirect(url_for('login'))
         
         return f(*args, **kwargs)
     return wrapper

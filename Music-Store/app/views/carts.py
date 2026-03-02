@@ -51,8 +51,9 @@ class ViewCartView(MethodView):
         total = 0
         for item in cart.items:
             if item.quantity > item.album.copies:
-                flash(f"Not enough stock for {item.album.title}", "danger")
-                return redirect(url_for("view_cart"))
+                item.quantity = item.album.copies
+                db.session.commit()
+                flash(f"Quantity adjusted for {item.album.title}", "warning")
 
             total += item.album.amount * item.quantity
         return render_template("view_cart.html",cart = cart,total = total)
